@@ -9,7 +9,7 @@ class MazeCell:
     y: int
     component: int
     is_open: bool = field(default=False)
-    walls: list = field(default_factory=lambda: [True, True, True, True])  # Top, Right, Bottom, Left
+    walls: list = field(default_factory=lambda: [True, True, True, True])  # Вверх, право, низ, лево
 
 
 N = 30
@@ -55,8 +55,10 @@ def generate_maze(size) -> list:
                 maze[x][y].walls[wall] = False
                 maze[nx][ny].walls[opp_wall] = False
 
-    maze[0][0].is_open = True
-    maze[size - 1][size - 1].is_open = True
+    # Добавление входа и выхода
+    maze[0][0].walls[0] = False  # Убираем верхнюю стену первой ячейки (вход)
+    maze[size - 1][size - 1].walls[2] = False  # Убираем нижнюю стену последней ячейки (выход)
+
     return maze
 
 
@@ -67,18 +69,16 @@ def draw_maze(maze):
         for y in range(size):
             cell = maze[x][y]
             if cell.walls[0]:
-                ax.plot([y, y + 1], [size - x, size - x], 'k-', lw=LINE_WIDTH)  # Top
+                ax.plot([y, y + 1], [size - x, size - x], 'k-', lw=LINE_WIDTH)  # вверх
             if cell.walls[1]:
-                ax.plot([y + 1, y + 1], [size - x, size - x - 1], 'k-', lw=LINE_WIDTH)  # Right
+                ax.plot([y + 1, y + 1], [size - x, size - x - 1], 'k-', lw=LINE_WIDTH)  # право
             if cell.walls[2]:
-                ax.plot([y, y + 1], [size - x - 1, size - x - 1], 'k-', lw=LINE_WIDTH)  # Bottom
+                ax.plot([y, y + 1], [size - x - 1, size - x - 1], 'k-', lw=LINE_WIDTH)  # низ
             if cell.walls[3]:
-                ax.plot([y, y], [size - x, size - x - 1], 'k-', lw=LINE_WIDTH)  # Left
+                ax.plot([y, y], [size - x, size - x - 1], 'k-', lw=LINE_WIDTH)  # лево
 
     ax.axis('off')
     plt.show()
 
-
-# Generate and draw the maze
 maze = generate_maze(N)
 draw_maze(maze)
